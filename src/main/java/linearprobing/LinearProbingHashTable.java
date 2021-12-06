@@ -2,6 +2,7 @@ package linearprobing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class LinearProbingHashTable<K, V> implements Map<K, V> {
 
@@ -67,7 +68,7 @@ public class LinearProbingHashTable<K, V> implements Map<K, V> {
     private List<MapEntry<K, V>> entries;
 
     private int capacity() {
-        return this.capacity;
+        return capacity;
     }
 
     private void setCapacity(int capacity) {
@@ -83,9 +84,7 @@ public class LinearProbingHashTable<K, V> implements Map<K, V> {
      * factor
      */
     public LinearProbingHashTable() {
-        this.capacity = INITCAPACITY;
-        this.entries = new ArrayList<>(INITCAPACITY);
-        this.loadFactor = LOADFACTOR;
+        this(INITCAPACITY, LOADFACTOR);
     }
 
     /**
@@ -93,9 +92,7 @@ public class LinearProbingHashTable<K, V> implements Map<K, V> {
      * and default load factor
      */
     public LinearProbingHashTable(int capacity) {
-        this.capacity = capacity;
-        this.entries = new ArrayList<>(capacity);
-        this.loadFactor = LOADFACTOR;
+        this(capacity, LOADFACTOR);
     }
 
     /**
@@ -113,6 +110,11 @@ public class LinearProbingHashTable<K, V> implements Map<K, V> {
         this.capacity = capacity;
         this.entries = new ArrayList<>(capacity);
         this.loadFactor = loadFactor;
+        initialize(capacity);
+    }
+
+    private void initialize(int n) {
+        for (int i = 0; i < n; i++) entries.add(null);
     }
 
     @Override
@@ -182,11 +184,10 @@ public class LinearProbingHashTable<K, V> implements Map<K, V> {
         setCapacity(newCapacity);
         List<MapEntry<K, V>> oldTab = entries;
         entries = new ArrayList<>(newCapacity);
+        initialize(newCapacity);
         size = 0;
         for (MapEntry<K, V> hashNode : oldTab) {
-            if (hashNode != null) {
-                put(hashNode.key, hashNode.value);
-            }
+            if (hashNode != null) put(hashNode.key, hashNode.value);
         }
     }
 
@@ -209,7 +210,7 @@ public class LinearProbingHashTable<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(K key) throws NullPointerException {
-        return get(key) == null;
+        return get(key) != null;
     }
 
     @Override
@@ -255,19 +256,11 @@ public class LinearProbingHashTable<K, V> implements Map<K, V> {
      */
     @Override
     public String toString() {
-        int i = 0;
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
+        StringJoiner sj = new StringJoiner(",");
         for (MapEntry<K, V> hashNode : entries) {
-            if (hashNode != null) {
-                sb.append("<" + hashNode.key + ", " + hashNode.value + ">");
-            }
-            if (i < entries.size() - 1) sb.append(",");
-            i++;
+            if (hashNode != null) sj.add("<" + hashNode.key + ", " + hashNode.value + ">");
         }
-        sb.append("]");
-        return sb.toString();
-
+        return "[" + sj + "]";
     }
 
 }
