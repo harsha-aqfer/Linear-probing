@@ -68,7 +68,6 @@ public class LinearProbingHashTable<K, V> implements Map<K, V> {
     private List<MapEntry<K, V>> entries;
 
     private int capacity() {
-        System.out.println("CAPACITY: " + capacity);
         return capacity;
     }
 
